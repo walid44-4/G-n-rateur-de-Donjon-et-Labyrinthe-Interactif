@@ -1,17 +1,17 @@
 #include <iostream>
 
-#include "Case.hpp"
+#include "CaseFactory.hpp"
 
 int main()
 {
     std::cout << "Projet C++ - Generateur de donjon" << std::endl;
 
     Case* cases[] = {
-        new Mur(),
-        new Passage(),
-        new Tresor(),
-        new Monstre(),
-        new Piege()
+        CaseFactory::creerCase(TypeCase::MUR),
+        CaseFactory::creerCase(TypeCase::PASSAGE),
+        CaseFactory::creerCase(TypeCase::TRESOR),
+        CaseFactory::creerCase(TypeCase::MONSTRE),
+        CaseFactory::creerCase(TypeCase::PIEGE)
     };
 
     std::cout << "Symboles des cases : ";

@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -pedantic -Iinclude
 TARGET = donjon
-SRC = src/main.cpp src/Case.cpp
+SRC = src/main.cpp src/Case.cpp src/CaseFactory.cpp
 
 all: $(TARGET)
 
