@@ -54,6 +54,38 @@ void Donjon::afficher() const
     std::cout << *this;
 }
 
+void Donjon::afficherAvecAventurier(const Aventurier& joueur) const
+{
+    std::cout << '+';
+    for (int x = 0; x < largeur; ++x) {
+        std::cout << '-';
+    }
+    std::cout << '+' << std::endl;
+
+    for (int y = 0; y < hauteur; ++y) {
+        std::cout << '|';
+        for (int x = 0; x < largeur; ++x) {
+            if (joueur.getX() == x && joueur.getY() == y) {
+                std::cout << '@';
+            } else if (entree == std::make_pair(x, y)) {
+                std::cout << 'E';
+            } else if (sortie == std::make_pair(x, y)) {
+                std::cout << 'S';
+            } else {
+                Case* c = getCase(x, y);
+                std::cout << (c != nullptr ? c->afficher() : ' ');
+            }
+        }
+        std::cout << '|' << std::endl;
+    }
+
+    std::cout << '+';
+    for (int x = 0; x < largeur; ++x) {
+        std::cout << '-';
+    }
+    std::cout << '+' << std::endl;
+}
+
 void Donjon::genererLabyrinthe(int x, int y, std::vector<std::vector<bool>>& visite)
 {
     visite[y][x] = true;

@@ -3,6 +3,43 @@
 #include "Aventurier.hpp"
 #include "Donjon.hpp"
 
+bool tenterDeplacement(const Donjon& donjon, Aventurier& joueur, char commande)
+{
+    int nx = joueur.getX();
+    int ny = joueur.getY();
+
+    switch (commande) {
+    case 'z':
+        --ny;
+        break;
+    case 'q':
+        --nx;
+        break;
+    case 's':
+        ++ny;
+        break;
+    case 'd':
+        ++nx;
+        break;
+    default:
+        std::cout << "Commande inconnue." << std::endl;
+        return false;
+    }
+
+    if (!donjon.estDansBornes(nx, ny)) {
+        std::cout << "Deplacement impossible : hors du donjon." << std::endl;
+        return false;
+    }
+
+    if (donjon.estMur(nx, ny)) {
+        std::cout << "Deplacement impossible : mur." << std::endl;
+        return false;
+    }
+
+    joueur.deplacer(nx, ny);
+    return true;
+}
+
 int main()
 {
     std::cout << "Projet C++ - Generateur de donjon" << std::endl;
@@ -10,17 +47,18 @@ int main()
     Donjon donjon;
     donjon.generer(21, 21);
 
-    std::cout << donjon;
-
     Aventurier joueur(donjon.getEntree().first, donjon.getEntree().second);
+    donjon.afficherAvecAventurier(joueur);
     joueur.afficherStatut();
 
-    joueur.deplacer(donjon.getEntree().first + 1, donjon.getEntree().second);
-    joueur.perdreVie(15);
+    std::cout << "Commande (z/q/s/d) : ";
+    char commande;
+    std::cin >> commande;
 
-    std::cout << "Apres un test de deplacement et de perte de vie :" << std::endl;
+    tenterDeplacement(donjon, joueur, commande);
+
+    donjon.afficherAvecAventurier(joueur);
     joueur.afficherStatut();
-    std::cout << "Aventurier vivant : " << (joueur.estVivant() ? "oui" : "non") << std::endl;
 
     return 0;
 }
