@@ -41,6 +41,11 @@ void Donjon::generer(int nouvelleLargeur, int nouvelleHauteur)
     sortie = {largeur - 2, hauteur - 2};
 }
 
+void Donjon::afficher() const
+{
+    std::cout << *this;
+}
+
 void Donjon::viderGrille()
 {
     for (std::vector<Case*>& ligne : grille) {
@@ -141,4 +146,36 @@ void Donjon::setSortie(int x, int y)
     if (estDansBornes(x, y)) {
         sortie = {x, y};
     }
+}
+
+std::ostream& operator<<(std::ostream& os, const Donjon& donjon)
+{
+    os << '+';
+    for (int x = 0; x < donjon.getLargeur(); ++x) {
+        os << '-';
+    }
+    os << '+' << std::endl;
+
+    for (int y = 0; y < donjon.getHauteur(); ++y) {
+        os << '|';
+        for (int x = 0; x < donjon.getLargeur(); ++x) {
+            if (donjon.getEntree() == std::make_pair(x, y)) {
+                os << 'E';
+            } else if (donjon.getSortie() == std::make_pair(x, y)) {
+                os << 'S';
+            } else {
+                Case* c = donjon.getCase(x, y);
+                os << (c != nullptr ? c->afficher() : ' ');
+            }
+        }
+        os << '|' << std::endl;
+    }
+
+    os << '+';
+    for (int x = 0; x < donjon.getLargeur(); ++x) {
+        os << '-';
+    }
+    os << '+' << std::endl;
+
+    return os;
 }

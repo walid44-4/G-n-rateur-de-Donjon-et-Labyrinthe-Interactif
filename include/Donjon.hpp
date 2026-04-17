@@ -1,6 +1,7 @@
 #ifndef DONJON_HPP
 #define DONJON_HPP
 
+#include <iosfwd>
 #include <utility>
 #include <vector>
 
@@ -20,6 +21,7 @@ public:
     ~Donjon();
 
     void generer(int nouvelleLargeur, int nouvelleHauteur);
+    void afficher() const;
     void viderGrille();
     void initialiserGrille(int nouvelleLargeur, int nouvelleHauteur, TypeCase type);
     void remplacerCase(int x, int y, TypeCase type);
@@ -36,5 +38,7 @@ public:
     void setEntree(int x, int y);
     void setSortie(int x, int y);
 };
+
+std::ostream& operator<<(std::ostream& os, const Donjon& donjon);
 
 #endif
