@@ -18,6 +18,11 @@ public:
 
     void deplacer(int nx, int ny);
     void perdreVie(int degats);
+    void soigner(int points);
+    void ajouterEpee();
+    bool aUneEpee() const;
+    bool utiliserEpee();
+    void ajouterTresor();
     bool estVivant() const;
     void afficherStatut() const;
 

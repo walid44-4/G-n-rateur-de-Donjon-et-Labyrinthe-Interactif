@@ -27,6 +27,40 @@ void Aventurier::perdreVie(int degats)
     }
 }
 
+void Aventurier::soigner(int points)
+{
+    pointsDeVie += points;
+    if (pointsDeVie > pointsDeVieMax) {
+        pointsDeVie = pointsDeVieMax;
+    }
+}
+
+void Aventurier::ajouterEpee()
+{
+    ++inventaire["epee"];
+}
+
+bool Aventurier::aUneEpee() const
+{
+    auto it = inventaire.find("epee");
+    return it != inventaire.end() && it->second > 0;
+}
+
+bool Aventurier::utiliserEpee()
+{
+    if (!aUneEpee()) {
+        return false;
+    }
+
+    --inventaire["epee"];
+    return true;
+}
+
+void Aventurier::ajouterTresor()
+{
+    ++tresorsRamasses;
+}
+
 bool Aventurier::estVivant() const
 {
     return pointsDeVie > 0;

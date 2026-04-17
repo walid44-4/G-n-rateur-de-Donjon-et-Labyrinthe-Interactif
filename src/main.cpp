@@ -1,4 +1,5 @@
 #include <iostream>
+#include <random>
 
 #include "Aventurier.hpp"
 #include "Donjon.hpp"
@@ -40,6 +41,52 @@ bool tenterDeplacement(const Donjon& donjon, Aventurier& joueur, char commande)
     return true;
 }
 
+void resoudreCase(Donjon& donjon, Aventurier& joueur, int ancienX, int ancienY)
+{
+    Case* caseCourante = donjon.getCase(joueur.getX(), joueur.getY());
+
+    if (dynamic_cast<Tresor*>(caseCourante) != nullptr) {
+        static std::random_device rd;
+        static std::mt19937 generateur(rd());
+        std::uniform_int_distribution<int> distribution(0, 1);
+
+        joueur.ajouterTresor();
+
+        if (distribution(generateur) == 0) {
+            std::cout << "Tresor trouve : une pomme (+15 PV)." << std::endl;
+            joueur.soigner(15);
+        } else {
+            std::cout << "Tresor trouve : une epee." << std::endl;
+            joueur.ajouterEpee();
+        }
+
+        donjon.remplacerCase(joueur.getX(), joueur.getY(), TypeCase::PASSAGE);
+    } else if (dynamic_cast<Monstre*>(caseCourante) != nullptr) {
+        std::cout << "Un monstre apparait. Combat (c) ou fuite (f) ? ";
+        char choix;
+        std::cin >> choix;
+
+        if (choix == 'f') {
+            std::cout << "Vous fuyez et revenez a votre ancienne position." << std::endl;
+            joueur.deplacer(ancienX, ancienY);
+            return;
+        }
+
+        if (joueur.utiliserEpee()) {
+            std::cout << "Vous utilisez une epee et battez le monstre sans degat." << std::endl;
+        } else {
+            std::cout << "Vous combattez sans epee et perdez 20 PV." << std::endl;
+            joueur.perdreVie(20);
+        }
+
+        donjon.remplacerCase(joueur.getX(), joueur.getY(), TypeCase::PASSAGE);
+    } else if (dynamic_cast<Piege*>(caseCourante) != nullptr) {
+        std::cout << "Vous declenchez un piege (-15 PV)." << std::endl;
+        joueur.perdreVie(15);
+        donjon.remplacerCase(joueur.getX(), joueur.getY(), TypeCase::PASSAGE);
+    }
+}
+
 int main()
 {
     std::cout << "Projet C++ - Generateur de donjon" << std::endl;
@@ -55,10 +102,20 @@ int main()
     char commande;
     std::cin >> commande;
 
-    tenterDeplacement(donjon, joueur, commande);
+    int ancienX = joueur.getX();
+    int ancienY = joueur.getY();
+    bool deplacementEffectue = tenterDeplacement(donjon, joueur, commande);
+
+    if (deplacementEffectue) {
+        resoudreCase(donjon, joueur, ancienX, ancienY);
+    }
 
     donjon.afficherAvecAventurier(joueur);
     joueur.afficherStatut();
+
+    if (!joueur.estVivant()) {
+        std::cout << "L'aventurier est mort." << std::endl;
+    }
 
     return 0;
 }
