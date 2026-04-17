@@ -46,6 +46,7 @@ void Donjon::generer(int nouvelleLargeur, int nouvelleHauteur)
     remplacerCase(entree.first, entree.second, TypeCase::PASSAGE);
     genererLabyrinthe(entree.first, entree.second, visite);
     remplacerCase(sortie.first, sortie.second, TypeCase::PASSAGE);
+    placerElements();
 }
 
 void Donjon::afficher() const
@@ -86,6 +87,35 @@ void Donjon::genererLabyrinthe(int x, int y, std::vector<std::vector<bool>>& vis
 bool Donjon::estCelluleValidePourGeneration(int x, int y) const
 {
     return x > 0 && x < largeur - 1 && y > 0 && y < hauteur - 1;
+}
+
+void Donjon::placerElements()
+{
+    static std::random_device rd;
+    static std::mt19937 generateur(rd());
+    std::uniform_int_distribution<int> distribution(1, 100);
+
+    for (int y = 0; y < hauteur; ++y) {
+        for (int x = 0; x < largeur; ++x) {
+            if (std::make_pair(x, y) == entree || std::make_pair(x, y) == sortie) {
+                continue;
+            }
+
+            if (!estPassage(x, y)) {
+                continue;
+            }
+
+            int tirage = distribution(generateur);
+
+            if (tirage <= 5) {
+                remplacerCase(x, y, TypeCase::TRESOR);
+            } else if (tirage <= 10) {
+                remplacerCase(x, y, TypeCase::MONSTRE);
+            } else if (tirage <= 13) {
+                remplacerCase(x, y, TypeCase::PIEGE);
+            }
+        }
+    }
 }
 
 void Donjon::viderGrille()
@@ -145,6 +175,15 @@ bool Donjon::estMur(int x, int y) const
     }
 
     return dynamic_cast<Mur*>(grille[y][x]) != nullptr;
+}
+
+bool Donjon::estPassage(int x, int y) const
+{
+    if (!estDansBornes(x, y)) {
+        return false;
+    }
+
+    return dynamic_cast<Passage*>(grille[y][x]) != nullptr;
 }
 
 Case* Donjon::getCase(int x, int y) const

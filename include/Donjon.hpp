@@ -18,6 +18,7 @@ private:
 
     void genererLabyrinthe(int x, int y, std::vector<std::vector<bool>>& visite);
     bool estCelluleValidePourGeneration(int x, int y) const;
+    void placerElements();
 
 public:
     Donjon();
@@ -31,6 +32,7 @@ public:
 
     bool estDansBornes(int x, int y) const;
     bool estMur(int x, int y) const;
+    bool estPassage(int x, int y) const;
     Case* getCase(int x, int y) const;
 
     int getLargeur() const;
