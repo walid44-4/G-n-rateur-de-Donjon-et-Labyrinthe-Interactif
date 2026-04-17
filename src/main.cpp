@@ -1,27 +1,28 @@
 #include <iostream>
 
-#include "CaseFactory.hpp"
+#include "Donjon.hpp"
 
 int main()
 {
     std::cout << "Projet C++ - Generateur de donjon" << std::endl;
 
-    Case* cases[] = {
-        CaseFactory::creerCase(TypeCase::MUR),
-        CaseFactory::creerCase(TypeCase::PASSAGE),
-        CaseFactory::creerCase(TypeCase::TRESOR),
-        CaseFactory::creerCase(TypeCase::MONSTRE),
-        CaseFactory::creerCase(TypeCase::PIEGE)
-    };
+    Donjon donjon;
+    donjon.initialiserGrille(3, 2, TypeCase::MUR);
+    donjon.remplacerCase(1, 1, TypeCase::PASSAGE);
 
-    std::cout << "Symboles des cases : ";
-    for (Case* c : cases) {
-        std::cout << c->afficher();
-    }
-    std::cout << std::endl;
+    std::cout << "Taille du donjon : "
+              << donjon.getLargeur() << "x" << donjon.getHauteur()
+              << std::endl;
 
-    for (Case* c : cases) {
-        delete c;
+    std::cout << "Case (0,0) est un mur : "
+              << (donjon.estMur(0, 0) ? "oui" : "non")
+              << std::endl;
+
+    Case* caseTest = donjon.getCase(1, 1);
+    if (caseTest != nullptr) {
+        std::cout << "Case (1,1) apres remplacement : '"
+                  << caseTest->afficher() << "'"
+                  << std::endl;
     }
 
     return 0;
