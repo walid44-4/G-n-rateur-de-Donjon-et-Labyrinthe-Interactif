@@ -109,9 +109,22 @@ int main()
         std::cout << "Aucun chemin trouve vers la sortie." << std::endl;
     }
 
-    std::cout << "Commande (z/q/s/d) : ";
+    std::cout << "Commande (z/q/s/d ou p pour le chemin) : ";
     char commande;
     std::cin >> commande;
+
+    if (commande == 'p') {
+        if (!chemin.empty()) {
+            donjon.afficherAvecChemin(chemin, joueur);
+            std::cout << "Distance a la sortie : " << chemin.size() - 1 << " cases" << std::endl;
+        } else {
+            std::cout << "Aucun chemin trouve vers la sortie." << std::endl;
+        }
+
+        donjon.afficherAvecAventurier(joueur);
+        joueur.afficherStatut();
+        return 0;
+    }
 
     int ancienX = joueur.getX();
     int ancienY = joueur.getY();

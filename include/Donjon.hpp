@@ -28,6 +28,8 @@ public:
     void generer(int nouvelleLargeur, int nouvelleHauteur);
     void afficher() const;
     void afficherAvecAventurier(const Aventurier& joueur) const;
+    void afficherAvecChemin(const std::vector<std::pair<int, int>>& chemin,
+                            const Aventurier& joueur) const;
     std::vector<std::pair<int, int>> trouverChemin(std::pair<int, int> depart,
                                                    std::pair<int, int> arrivee) const;
     void viderGrille();

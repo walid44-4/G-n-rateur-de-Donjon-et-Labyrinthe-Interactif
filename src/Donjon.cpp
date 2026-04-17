@@ -87,6 +87,43 @@ void Donjon::afficherAvecAventurier(const Aventurier& joueur) const
     std::cout << '+' << std::endl;
 }
 
+void Donjon::afficherAvecChemin(const std::vector<std::pair<int, int>>& chemin,
+                                const Aventurier& joueur) const
+{
+    std::cout << '+';
+    for (int x = 0; x < largeur; ++x) {
+        std::cout << '-';
+    }
+    std::cout << '+' << std::endl;
+
+    for (int y = 0; y < hauteur; ++y) {
+        std::cout << '|';
+        for (int x = 0; x < largeur; ++x) {
+            std::pair<int, int> position = {x, y};
+
+            if (joueur.getX() == x && joueur.getY() == y) {
+                std::cout << '@';
+            } else if (entree == position) {
+                std::cout << 'E';
+            } else if (sortie == position) {
+                std::cout << 'S';
+            } else if (std::find(chemin.begin(), chemin.end(), position) != chemin.end()) {
+                std::cout << '.';
+            } else {
+                Case* c = getCase(x, y);
+                std::cout << (c != nullptr ? c->afficher() : ' ');
+            }
+        }
+        std::cout << '|' << std::endl;
+    }
+
+    std::cout << '+';
+    for (int x = 0; x < largeur; ++x) {
+        std::cout << '-';
+    }
+    std::cout << '+' << std::endl;
+}
+
 std::vector<std::pair<int, int>> Donjon::trouverChemin(std::pair<int, int> depart,
                                                        std::pair<int, int> arrivee) const
 {
