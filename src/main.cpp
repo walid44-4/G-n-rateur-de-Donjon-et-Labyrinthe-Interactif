@@ -98,6 +98,17 @@ int main()
     donjon.afficherAvecAventurier(joueur);
     joueur.afficherStatut();
 
+    std::vector<std::pair<int, int>> chemin = donjon.trouverChemin(
+        {joueur.getX(), joueur.getY()},
+        donjon.getSortie()
+    );
+
+    if (!chemin.empty()) {
+        std::cout << "Distance a la sortie : " << chemin.size() - 1 << " cases" << std::endl;
+    } else {
+        std::cout << "Aucun chemin trouve vers la sortie." << std::endl;
+    }
+
     std::cout << "Commande (z/q/s/d) : ";
     char commande;
     std::cin >> commande;

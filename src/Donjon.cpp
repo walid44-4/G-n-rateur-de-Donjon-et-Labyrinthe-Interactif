@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <queue>
 #include <random>
 
 Donjon::Donjon()
@@ -84,6 +85,71 @@ void Donjon::afficherAvecAventurier(const Aventurier& joueur) const
         std::cout << '-';
     }
     std::cout << '+' << std::endl;
+}
+
+std::vector<std::pair<int, int>> Donjon::trouverChemin(std::pair<int, int> depart,
+                                                       std::pair<int, int> arrivee) const
+{
+    std::vector<std::pair<int, int>> chemin;
+
+    if (!estDansBornes(depart.first, depart.second)
+        || !estDansBornes(arrivee.first, arrivee.second)
+        || estMur(depart.first, depart.second)
+        || estMur(arrivee.first, arrivee.second)) {
+        return chemin;
+    }
+
+    if (depart == arrivee) {
+        chemin.push_back(depart);
+        return chemin;
+    }
+
+    std::queue<std::pair<int, int>> file;
+    std::vector<std::vector<bool>> visite(hauteur, std::vector<bool>(largeur, false));
+    std::vector<std::vector<std::pair<int, int>>> parent(
+        hauteur,
+        std::vector<std::pair<int, int>>(largeur, {-1, -1})
+    );
+
+    file.push(depart);
+    visite[depart.second][depart.first] = true;
+
+    std::vector<std::pair<int, int>> directions = {
+        {0, -1},
+        {0, 1},
+        {1, 0},
+        {-1, 0}
+    };
+
+    while (!file.empty()) {
+        std::pair<int, int> courant = file.front();
+        file.pop();
+
+        if (courant == arrivee) {
+            std::pair<int, int> position = arrivee;
+
+            while (position != depart) {
+                chemin.insert(chemin.begin(), position);
+                position = parent[position.second][position.first];
+            }
+
+            chemin.insert(chemin.begin(), depart);
+            return chemin;
+        }
+
+        for (const std::pair<int, int>& direction : directions) {
+            int nx = courant.first + direction.first;
+            int ny = courant.second + direction.second;
+
+            if (estDansBornes(nx, ny) && !visite[ny][nx] && !estMur(nx, ny)) {
+                visite[ny][nx] = true;
+                parent[ny][nx] = courant;
+                file.push({nx, ny});
+            }
+        }
+    }
+
+    return chemin;
 }
 
 void Donjon::genererLabyrinthe(int x, int y, std::vector<std::vector<bool>>& visite)
