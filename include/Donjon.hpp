@@ -16,6 +16,9 @@ private:
     std::pair<int, int> entree;
     std::pair<int, int> sortie;
 
+    void genererLabyrinthe(int x, int y, std::vector<std::vector<bool>>& visite);
+    bool estCelluleValidePourGeneration(int x, int y) const;
+
 public:
     Donjon();
     ~Donjon();

@@ -1,6 +1,8 @@
 #include "Donjon.hpp"
 
+#include <algorithm>
 #include <iostream>
+#include <random>
 
 Donjon::Donjon()
     : largeur(0), hauteur(0), entree({0, 0}), sortie({0, 0})
@@ -39,11 +41,51 @@ void Donjon::generer(int nouvelleLargeur, int nouvelleHauteur)
     initialiserGrille(nouvelleLargeur, nouvelleHauteur, TypeCase::MUR);
     entree = {1, 1};
     sortie = {largeur - 2, hauteur - 2};
+
+    std::vector<std::vector<bool>> visite(hauteur, std::vector<bool>(largeur, false));
+    remplacerCase(entree.first, entree.second, TypeCase::PASSAGE);
+    genererLabyrinthe(entree.first, entree.second, visite);
+    remplacerCase(sortie.first, sortie.second, TypeCase::PASSAGE);
 }
 
 void Donjon::afficher() const
 {
     std::cout << *this;
+}
+
+void Donjon::genererLabyrinthe(int x, int y, std::vector<std::vector<bool>>& visite)
+{
+    visite[y][x] = true;
+
+    std::vector<std::pair<int, int>> directions = {
+        {0, -2},
+        {0, 2},
+        {2, 0},
+        {-2, 0}
+    };
+
+    static std::random_device rd;
+    static std::mt19937 generateur(rd());
+    std::shuffle(directions.begin(), directions.end(), generateur);
+
+    for (const std::pair<int, int>& direction : directions) {
+        int nx = x + direction.first;
+        int ny = y + direction.second;
+
+        if (estCelluleValidePourGeneration(nx, ny) && !visite[ny][nx]) {
+            int murX = x + direction.first / 2;
+            int murY = y + direction.second / 2;
+
+            remplacerCase(murX, murY, TypeCase::PASSAGE);
+            remplacerCase(nx, ny, TypeCase::PASSAGE);
+            genererLabyrinthe(nx, ny, visite);
+        }
+    }
+}
+
+bool Donjon::estCelluleValidePourGeneration(int x, int y) const
+{
+    return x > 0 && x < largeur - 1 && y > 0 && y < hauteur - 1;
 }
 
 void Donjon::viderGrille()
