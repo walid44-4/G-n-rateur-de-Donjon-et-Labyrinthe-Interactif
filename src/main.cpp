@@ -95,50 +95,65 @@ int main()
     donjon.generer(21, 21);
 
     Aventurier joueur(donjon.getEntree().first, donjon.getEntree().second);
-    donjon.afficherAvecAventurier(joueur);
-    joueur.afficherStatut();
+    bool quitter = false;
 
-    std::vector<std::pair<int, int>> chemin = donjon.trouverChemin(
-        {joueur.getX(), joueur.getY()},
-        donjon.getSortie()
-    );
+    while (joueur.estVivant()
+           && !quitter
+           && std::make_pair(joueur.getX(), joueur.getY()) != donjon.getSortie()) {
+        donjon.afficherAvecAventurier(joueur);
+        joueur.afficherStatut();
 
-    if (!chemin.empty()) {
-        std::cout << "Distance a la sortie : " << chemin.size() - 1 << " cases" << std::endl;
-    } else {
-        std::cout << "Aucun chemin trouve vers la sortie." << std::endl;
-    }
+        std::vector<std::pair<int, int>> chemin = donjon.trouverChemin(
+            {joueur.getX(), joueur.getY()},
+            donjon.getSortie()
+        );
 
-    std::cout << "Commande (z/q/s/d ou p pour le chemin) : ";
-    char commande;
-    std::cin >> commande;
-
-    if (commande == 'p') {
         if (!chemin.empty()) {
-            donjon.afficherAvecChemin(chemin, joueur);
             std::cout << "Distance a la sortie : " << chemin.size() - 1 << " cases" << std::endl;
         } else {
             std::cout << "Aucun chemin trouve vers la sortie." << std::endl;
         }
 
-        donjon.afficherAvecAventurier(joueur);
-        joueur.afficherStatut();
-        return 0;
+        std::cout << "Commande (z/q/s/d, p pour le chemin, x pour quitter) : ";
+        char commande;
+        if (!(std::cin >> commande)) {
+            std::cout << "Lecture de commande interrompue." << std::endl;
+            break;
+        }
+
+        if (commande == 'x') {
+            quitter = true;
+            continue;
+        }
+
+        if (commande == 'p') {
+            if (!chemin.empty()) {
+                donjon.afficherAvecChemin(chemin, joueur);
+                std::cout << "Distance a la sortie : " << chemin.size() - 1 << " cases" << std::endl;
+            } else {
+                std::cout << "Aucun chemin trouve vers la sortie." << std::endl;
+            }
+
+            continue;
+        }
+
+        int ancienX = joueur.getX();
+        int ancienY = joueur.getY();
+        bool deplacementEffectue = tenterDeplacement(donjon, joueur, commande);
+
+        if (deplacementEffectue) {
+            resoudreCase(donjon, joueur, ancienX, ancienY);
+        }
     }
-
-    int ancienX = joueur.getX();
-    int ancienY = joueur.getY();
-    bool deplacementEffectue = tenterDeplacement(donjon, joueur, commande);
-
-    if (deplacementEffectue) {
-        resoudreCase(donjon, joueur, ancienX, ancienY);
-    }
-
-    donjon.afficherAvecAventurier(joueur);
-    joueur.afficherStatut();
 
     if (!joueur.estVivant()) {
         std::cout << "L'aventurier est mort." << std::endl;
+    } else if (std::make_pair(joueur.getX(), joueur.getY()) == donjon.getSortie()) {
+        donjon.afficherAvecAventurier(joueur);
+        joueur.afficherStatut();
+        std::cout << "Victoire, vous avez atteint la sortie !" << std::endl;
+    } else if (quitter) {
+        std::cout << "Partie quittee." << std::endl;
     }
 
     return 0;
