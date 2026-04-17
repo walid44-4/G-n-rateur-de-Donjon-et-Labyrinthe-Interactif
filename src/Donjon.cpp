@@ -1,5 +1,7 @@
 #include "Donjon.hpp"
 
+#include <iostream>
+
 Donjon::Donjon()
     : largeur(0), hauteur(0), entree({0, 0}), sortie({0, 0})
 {
@@ -8,6 +10,35 @@ Donjon::Donjon()
 Donjon::~Donjon()
 {
     viderGrille();
+}
+
+void Donjon::generer(int nouvelleLargeur, int nouvelleHauteur)
+{
+    if (nouvelleLargeur < 5) {
+        std::cout << "Largeur trop petite, ajustee a 5." << std::endl;
+        nouvelleLargeur = 5;
+    }
+
+    if (nouvelleHauteur < 5) {
+        std::cout << "Hauteur trop petite, ajustee a 5." << std::endl;
+        nouvelleHauteur = 5;
+    }
+
+    if (nouvelleLargeur % 2 == 0) {
+        std::cout << "Largeur paire ajustee de " << nouvelleLargeur
+                  << " a " << nouvelleLargeur + 1 << "." << std::endl;
+        ++nouvelleLargeur;
+    }
+
+    if (nouvelleHauteur % 2 == 0) {
+        std::cout << "Hauteur paire ajustee de " << nouvelleHauteur
+                  << " a " << nouvelleHauteur + 1 << "." << std::endl;
+        ++nouvelleHauteur;
+    }
+
+    initialiserGrille(nouvelleLargeur, nouvelleHauteur, TypeCase::MUR);
+    entree = {1, 1};
+    sortie = {largeur - 2, hauteur - 2};
 }
 
 void Donjon::viderGrille()

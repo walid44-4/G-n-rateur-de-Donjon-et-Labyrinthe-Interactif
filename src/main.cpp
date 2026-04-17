@@ -2,28 +2,48 @@
 
 #include "Donjon.hpp"
 
+bool toutesLesCasesSontDesMurs(const Donjon& donjon)
+{
+    for (int y = 0; y < donjon.getHauteur(); ++y) {
+        for (int x = 0; x < donjon.getLargeur(); ++x) {
+            if (!donjon.estMur(x, y)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 int main()
 {
     std::cout << "Projet C++ - Generateur de donjon" << std::endl;
 
     Donjon donjon;
-    donjon.initialiserGrille(3, 2, TypeCase::MUR);
-    donjon.remplacerCase(1, 1, TypeCase::PASSAGE);
+    donjon.generer(20, 20);
 
     std::cout << "Taille du donjon : "
               << donjon.getLargeur() << "x" << donjon.getHauteur()
               << std::endl;
 
-    std::cout << "Case (0,0) est un mur : "
-              << (donjon.estMur(0, 0) ? "oui" : "non")
+    std::cout << "Entree provisoire : ("
+              << donjon.getEntree().first << ", "
+              << donjon.getEntree().second << ")"
               << std::endl;
 
-    Case* caseTest = donjon.getCase(1, 1);
-    if (caseTest != nullptr) {
-        std::cout << "Case (1,1) apres remplacement : '"
-                  << caseTest->afficher() << "'"
-                  << std::endl;
-    }
+    std::cout << "Sortie provisoire : ("
+              << donjon.getSortie().first << ", "
+              << donjon.getSortie().second << ")"
+              << std::endl;
+
+    std::cout << "Toutes les cases sont des murs : "
+              << (toutesLesCasesSontDesMurs(donjon) ? "oui" : "non")
+              << std::endl;
+
+    donjon.generer(21, 21);
+    std::cout << "Nouvelle taille du donjon : "
+              << donjon.getLargeur() << "x" << donjon.getHauteur()
+              << std::endl;
 
     return 0;
 }

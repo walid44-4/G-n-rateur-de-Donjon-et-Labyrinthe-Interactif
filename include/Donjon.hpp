@@ -19,6 +19,7 @@ public:
     Donjon();
     ~Donjon();
 
+    void generer(int nouvelleLargeur, int nouvelleHauteur);
     void viderGrille();
     void initialiserGrille(int nouvelleLargeur, int nouvelleHauteur, TypeCase type);
     void remplacerCase(int x, int y, TypeCase type);
