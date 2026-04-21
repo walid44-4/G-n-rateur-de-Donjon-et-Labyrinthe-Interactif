@@ -4,6 +4,35 @@
 #include "Aventurier.hpp"
 #include "Donjon.hpp"
 
+namespace {
+
+const int LARGEUR_PAR_DEFAUT = 21;
+const int HAUTEUR_PAR_DEFAUT = 21;
+
+bool estSurSortie(const Donjon& donjon, const Aventurier& joueur)
+{
+    return std::make_pair(joueur.getX(), joueur.getY()) == donjon.getSortie();
+}
+
+std::vector<std::pair<int, int>> afficherDistanceVersSortie(const Donjon& donjon,
+                                                            const Aventurier& joueur)
+{
+    std::vector<std::pair<int, int>> chemin = donjon.trouverChemin(
+        {joueur.getX(), joueur.getY()},
+        donjon.getSortie()
+    );
+
+    if (!chemin.empty()) {
+        std::cout << "Distance a la sortie : " << chemin.size() - 1 << " cases" << std::endl;
+    } else {
+        std::cout << "Aucun chemin trouve vers la sortie." << std::endl;
+    }
+
+    return chemin;
+}
+
+} // namespace
+
 bool tenterDeplacement(const Donjon& donjon, Aventurier& joueur, char commande)
 {
     int nx = joueur.getX();
@@ -92,27 +121,18 @@ int main()
     std::cout << "Projet C++ - Generateur de donjon" << std::endl;
 
     Donjon donjon;
-    donjon.generer(21, 21);
+    donjon.generer(LARGEUR_PAR_DEFAUT, HAUTEUR_PAR_DEFAUT);
 
     Aventurier joueur(donjon.getEntree().first, donjon.getEntree().second);
     bool quitter = false;
 
     while (joueur.estVivant()
            && !quitter
-           && std::make_pair(joueur.getX(), joueur.getY()) != donjon.getSortie()) {
+           && !estSurSortie(donjon, joueur)) {
         donjon.afficherAvecAventurier(joueur);
         joueur.afficherStatut();
 
-        std::vector<std::pair<int, int>> chemin = donjon.trouverChemin(
-            {joueur.getX(), joueur.getY()},
-            donjon.getSortie()
-        );
-
-        if (!chemin.empty()) {
-            std::cout << "Distance a la sortie : " << chemin.size() - 1 << " cases" << std::endl;
-        } else {
-            std::cout << "Aucun chemin trouve vers la sortie." << std::endl;
-        }
+        std::vector<std::pair<int, int>> chemin = afficherDistanceVersSortie(donjon, joueur);
 
         std::cout << "Commande (z/q/s/d, p pour le chemin, x pour quitter) : ";
         char commande;
@@ -129,7 +149,7 @@ int main()
         if (commande == 'p') {
             if (!chemin.empty()) {
                 donjon.afficherAvecChemin(chemin, joueur);
-                std::cout << "Distance a la sortie : " << chemin.size() - 1 << " cases" << std::endl;
+                afficherDistanceVersSortie(donjon, joueur);
             } else {
                 std::cout << "Aucun chemin trouve vers la sortie." << std::endl;
             }
@@ -148,7 +168,7 @@ int main()
 
     if (!joueur.estVivant()) {
         std::cout << "L'aventurier est mort." << std::endl;
-    } else if (std::make_pair(joueur.getX(), joueur.getY()) == donjon.getSortie()) {
+    } else if (estSurSortie(donjon, joueur)) {
         donjon.afficherAvecAventurier(joueur);
         joueur.afficherStatut();
         std::cout << "Victoire, vous avez atteint la sortie !" << std::endl;
